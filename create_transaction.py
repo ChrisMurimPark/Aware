@@ -1,5 +1,4 @@
 import mysql.connector
-from mysql.connector import errorcode
 import time
 import datetime
 import locale

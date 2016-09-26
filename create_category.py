@@ -52,7 +52,8 @@ def create_category():
 	selected_option = raw_input("Type the option number and hit <Enter>: ")
 	while (not selected_option in options):
 		os.system("clear")
-		print("Success! " + new_category + " is now a category.")
+		print("Success! New category:\n")
+		print("\t" + new_category)
 		print("\n1. Back to Main Menu")
 		print("2. Exit")
 		selected_option = raw_input("Sorry, that's not a valid option. Try again: ")
