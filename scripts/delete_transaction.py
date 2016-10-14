@@ -5,7 +5,7 @@ from show_transactions import show_transactions
 
 def delete_transaction(show_fail, skip_init):
 	# show transactions with IDs
-	show_transactions("date", True, True)
+	show_transactions("date", False, True)
 
 	options = ["1", "2"]
 	if show_fail:
@@ -22,7 +22,7 @@ def delete_transaction(show_fail, skip_init):
 		selected_option = raw_input("Type the option number and hit <Enter>: ")
 	while selected_option not in options:
 		os.system("clear")
-		show_transactions("date", True, True)
+		show_transactions("date", False, True)
 		if show_fail:
 			print("\nSorry, that delete didn't work.")
 			print("1. Try again")
@@ -34,7 +34,7 @@ def delete_transaction(show_fail, skip_init):
 
 	if selected_option == options[0]:
 		os.system("clear")
-		show_transactions("date", True, True)
+		show_transactions("date", False, True)
 		print("\nWhich transaction would you like to delete?")
 		id_to_delete = raw_input("Type the transaction ID and hit <Enter>: ")
 
@@ -66,7 +66,7 @@ def delete_transaction(show_fail, skip_init):
 
 			post_delete_options = ["1", "2"]
 			os.system("clear")
-			show_transactions("date", True, True)
+			show_transactions("date", False, True)
 
 			print("\n1. Delete another")
 			print("2. Back to main menu")
@@ -74,7 +74,7 @@ def delete_transaction(show_fail, skip_init):
 			post_delete_selected_option = raw_input("Type the option number and hit <Enter>: ")
 			while post_delete_selected_option not in post_delete_options:
 				os.system("clear")
-				show_transactions("date", True, True)
+				show_transactions("date", False, True)
 				print("\n1. Delete another")
 				print("2. Back to main menu")
 				post_delete_selected_option = raw_input("Sorry, that's not a valid option. Try again: ")
