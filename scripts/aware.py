@@ -48,7 +48,7 @@ def main():
 		if (selected_option == options[0]):
 			create_transaction()
 		elif (selected_option == options[1]):
-			delegate_show_transactions("date", True)
+			delegate_show_transactions("date", False)
 		elif (selected_option == options[2]):
 			delete_transaction(False, False)		
 		elif (selected_option == options[3]):
