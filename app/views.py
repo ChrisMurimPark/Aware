@@ -3,6 +3,7 @@ from flask import render_template, redirect, flash, g, request, url_for
 from .forms import LoginForm, RegisterForm
 from .models import User
 from flask_login import login_user, logout_user, current_user, login_required
+from sqlalchemy.exc import IntegrityError
 import bcrypt
 
 
@@ -50,10 +51,15 @@ def register():
                 email=form.email.data,
                 password=form.password.data)
         db.session.add(user)
-        db.session.commit()
-        flash('Thanks for registering!')
+        try:
+            db.session.commit()
+            flash('Thanks for registering!')
+        except IntegrityError:
+            db.session.rollback()
+            flash('That email is already registered.')
+            return redirect(url_for('register'))
         return redirect(url_for('index'))
-    return render_template('register.html', form=form)
+    return render_template('register.html', title='Register', form=form)
 
 
 # sets a global field to track lm's current_user before each request
