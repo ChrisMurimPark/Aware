@@ -48,6 +48,7 @@ class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), index=True)
     date = db.Column(db.Date, index=True)
+    cost = db.Column(db.Float, index=True)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
