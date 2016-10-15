@@ -5,8 +5,13 @@
 		<title>{{ title }} - Aware</title>
 	</head>
 	<body>
+        {% if g.user.is_authenticated %}
 		<a href='/index'>Home</a>
-		<a href='/login'>Sign In</a>
+        <a href='/logout'>Log Out</a>
+        {% else %}
+        <a href='/login'>Log In</a>
+        <a href='/register'>Register</a>
+        {% endif %}
 		<hr>
 		{% block content %}{% endblock %}
 	</body>
