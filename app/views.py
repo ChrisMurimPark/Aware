@@ -31,7 +31,7 @@ def login():
         if not user.verify_password(form.password.data): 
             flash("Sorry, the password you entered is not correct.")
             return redirect(url_for('login'))
-        login_user(user, remember=False)
+        login_user(user)
         return redirect(url_for('index'))
     return render_template('login.html', title='Login', form=form)
 
@@ -54,12 +54,12 @@ def register():
         db.session.add(user)
         try:
             db.session.commit()
-            flash('Thanks for registering!')
+            login_user(user)
+            return redirect(url_for('index'))
         except IntegrityError:
             db.session.rollback()
             flash('That email is already registered.')
             return redirect(url_for('register'))
-        return redirect(url_for('index'))
     return render_template('register.html', title='Register', form=form)
 
 
