@@ -1,6 +1,7 @@
 import bcrypt
 from app import db
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(64), index=True)
@@ -42,9 +43,6 @@ class User(db.Model):
         pwhash = bcrypt.hashpw(password.encode('utf-8'), self.password)
         return self.password == pwhash
 
-    def __repr__(self):
-        return '<User {} {} {} {} {}>'.format(self.id, self.first_name, self.last_name,
-                self.email, self.password)
 
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -53,9 +51,6 @@ class Transaction(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __repr__(self):
-        return '<Transaction {} category_id:{} user_id:{} {} {}>'.format(
-                self.id, self.category_id, self.user_id, self.name, self.date)
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
