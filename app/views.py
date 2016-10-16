@@ -14,7 +14,7 @@ from datetime import datetime
 @login_required
 @nocache
 def index():
-    flash("Hello, {}".format(g.user.first_name))
+    flash("Hello, {}.".format(g.user.first_name))
     return render_template('index.html', title='Home')
 
 

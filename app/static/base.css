@@ -1,4 +1,20 @@
+html
+{
+	font-family: Arial, Helvetica, sans-serif;
+}
 .error
 {
     color: red;
 }
+
+table
+{
+	border-collapse: collapse;
+}
+
+table, th, td
+{
+	border: 1px solid black;
+}
+
+
