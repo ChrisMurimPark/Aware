@@ -2,18 +2,25 @@
 <html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base.css') }}"/>
+		<script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='datatables.css') }}"/>
+		<script type="text/javascript" charset="utf8" src="http://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 		<title>{{ title }} - Aware</title>
 	</head>
 	<body>
         {% if g.user.is_authenticated %}
-        <a href="{{ url_for('index') }}">Home</a>
-        <a href="{{ url_for('transactions') }}">Transactions</a>
-        <a href="{{ url_for('categories') }}">Categories</a>
-        <a href="{{ url_for('profile') }}">Profile</a>
-        <a href="{{ url_for('logout') }}">Log Out</a>
+		<ul>
+			<li><a href="{{ url_for('index') }}">Home</a></li>
+			<li><a href="{{ url_for('transactions') }}">Transactions</a></li>
+			<li><a href="{{ url_for('categories') }}">Categories</a></li>
+			<li><a href="{{ url_for('profile') }}">Profile</a></li>
+			<li><a href="{{ url_for('logout') }}">Log Out</a></li>
+		</ul>
         {% else %}
-        <a href="{{ url_for('login') }}">Log In</a>
-        <a href="{{ url_for('register') }}">Register</a>
+		<ul>
+			<li><a href="{{ url_for('login') }}">Log In</a></li>
+			<li><a href="{{ url_for('register') }}">Register</a></li>
+		</ul>
         {% endif %}
 		<hr>
 		{% block content %}{% endblock %}

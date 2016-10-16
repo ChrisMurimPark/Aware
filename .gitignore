@@ -7,3 +7,9 @@ ENV/
 __pycache__/
 *.py[cod]
 *$py.class
+
+# scripts
+import_data.py
+scripts/export_data.py
+wipe_tests.py
+

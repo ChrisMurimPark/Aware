@@ -1,23 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
+<script type="text/javascript">
+$(document).ready(function() {
+	$('#transactions').DataTable(
+		{
+		"order": [[0,"desc"],[1,"asc"]]
+		}
+		);
+});
+</script>
 <h1>Transactions</h1>
 <a href="{{ url_for('add_transaction') }}">New Transaction</a>
 <br/><br/>
-<table>
-    <tr>
-        <th>Name</th>
-        <th>Date</th>
-        <th>Category</th>
-        <th>Cost</th>
-    </tr>
-    {% for t in transactions %}
-    <tr>
-        <td>{{ t.name }}</td>
-        <td>{{ t.date }}</td>
-        <td>{{ t.category.name }}</td>
-        <td>{{ t.cost }}</td>
-    </tr>
-    {% endfor %}
+<table class="display" id="transactions">
+	<thead>
+		<tr>
+			<th>Date</th>
+			<th>Name</th>
+			<th>Category</th>
+			<th>Cost</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for t in transactions %}
+		<tr>
+			<td>{{ t.date }}</td>
+			<td>{{ t.name }}</td>
+			<td>{{ t.category.name }}</td>
+			<td>{{ t.cost }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
 </table>
 {% endblock %}
 

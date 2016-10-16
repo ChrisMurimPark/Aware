@@ -4,14 +4,18 @@
 <a href="{{ url_for('add_category') }}">New Category</a>
 <br/><br/>
 <table>
-    <tr>
-        <th>Name</th>
-    </tr>
-    {% for c in categories %}
-    <tr>
-        <td>{{ c.name }}</td>
-    </tr>
-    {% endfor %}
+	<thead>
+		<tr>
+			<th>Name</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for c in categories %}
+		<tr>
+			<td>{{ c.name }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
 </table>
 {% endblock %}
 
