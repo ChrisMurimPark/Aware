@@ -4,10 +4,10 @@ from app import db
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(64), index=True)
-    last_name = db.Column(db.String(64), index=True)
-    email = db.Column(db.String(120), index=True, unique=True)
-    password = db.Column(db.String(64))
+    first_name = db.Column(db.String(64), index=True, nullable=False)
+    last_name = db.Column(db.String(64), index=True, nullable=False)
+    email = db.Column(db.String(120), index=True, unique=True, nullable=False)
+    password = db.Column(db.String(64), nullable=False)
     transactions = db.relationship('Transaction', backref='user', lazy='dynamic')
     categories = db.relationship('Category', backref='user', lazy='dynamic')
 
@@ -46,16 +46,16 @@ class User(db.Model):
 
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), index=True)
-    date = db.Column(db.Date, index=True)
-    cost = db.Column(db.Float, index=True)
-    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    name = db.Column(db.String(120), index=True, nullable=False)
+    date = db.Column(db.Date, index=True, nullable=False)
+    cost = db.Column(db.Float, index=True, nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), index=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    name = db.Column(db.String(120), index=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     transactions = db.relationship('Transaction', backref='category', lazy='dynamic')
 

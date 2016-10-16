@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Add Transaction</h1>
+<form action="" method="post" name="add_transaction">
+    {{ form.hidden_tag() }}
+    <p>Title: {{ form.title() }}</p>
+    {% for error in form.title.errors %}
+    <p class="error">[{{ error }}]</p>
+    {% endfor %}
+    <p>Date: {{ form.date() }}</p>
+    {% for error in form.date.errors %}
+    <p class="error">[{{ error }}]</p>
+    {% endfor %}
+    <p>Cost: {{ form.cost() }}</p>
+    {% for error in form.cost.errors %}
+    <p class="error">[{{ error }}]</p>
+    {% endfor %}
+    <p>Category: {{ form.category() }}</p>
+    {% for error in form.category.errors %}
+    <p class="error">[{{ error }}]</p>
+    {% endfor %}
+    <p><input type="submit" value="Add"/></p>
+</form>
+{% endblock %}
+

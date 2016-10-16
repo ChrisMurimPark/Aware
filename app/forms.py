@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms import StringField, PasswordField, DateField, SelectField, DecimalField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, NumberRange
 
 
 class LoginForm(FlaskForm):
@@ -15,4 +15,12 @@ class RegisterForm(FlaskForm):
     password = PasswordField('password', validators=[DataRequired(),Length(4,64)])
     password_confirm = PasswordField('password_confirm',
             validators=[DataRequired(),EqualTo('password', message='Passwords do not match')])
+
+
+class AddTransactionForm(FlaskForm):
+    categories = [(1,'Groceries'), (2,'Coffee Shop'), (3,'Misc')]
+    title = StringField('name', validators=[DataRequired(),Length(1,120)])
+    date = DateField('date', validators=[DataRequired()])
+    cost = DecimalField('cost', validators=[DataRequired(),NumberRange(0)])
+    category = SelectField(coerce=int, label='Category', choices=categories, validators=[DataRequired()])
 

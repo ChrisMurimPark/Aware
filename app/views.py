@@ -1,11 +1,12 @@
 from app import app, lm, db
 from flask import render_template, redirect, flash, g, request, url_for
-from .forms import LoginForm, RegisterForm
-from .models import User
+from .forms import LoginForm, RegisterForm, AddTransactionForm
+from .models import User, Transaction, Category
 from flask_login import login_user, logout_user, current_user, login_required
 from sqlalchemy.exc import IntegrityError
 from .nocache import nocache
 import bcrypt
+from datetime import datetime
 
 
 @app.route('/')
@@ -63,20 +64,49 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 
-@app.route('/profile/<id>')
+@app.route('/profile')
 @login_required
 @nocache
-def profile(id):
-    user = User.query.filter_by(id=id).first()
-    if user == None:
-        flash('User not found.')
+def profile():
+    if g.user is None or not g.user.is_authenticated:
+        # send an email here?
+        flash('Something went wrong')
         return redirect(url_for('index'))
-    transactions = [
-            {'name': 'Aldi', 'date': '2016-01-01', 'category': 'Groceries', 'cost': '18.43'},
-            {'name': 'Emerald City Coffee', 'date': '2016-01-02', 'category': 'Coffee Shop', 'cost': '2.80'}
-            ]
-    return render_template('profile.html', user=user,
-            transactions=transactions, title='Profile')
+    return render_template('profile.html', title='Profile')
+
+    
+@app.route('/transactions')
+@login_required
+@nocache
+def transactions():
+    if not user_set():
+        return redirect(url_for('index'))
+    # transactions = [{'name': 'Aldi', 'date': '2016-01-01', 'category': 'Groceries', 'cost': '18.43'},{'name': 'Emerald City Coffee', 'date': '2016-01-02', 'category': 'Coffee Shop', 'cost': '2.80'}]
+    transactions = g.user.transactions.all()
+    return render_template('transactions.html', transactions=transactions, title='Transactions')
+
+
+@app.route('/add_transaction', methods=['GET', 'POST'])
+@login_required
+@nocache
+def add_transaction():
+    if not user_set():
+        return redirect(url_for('index'))
+    form = AddTransactionForm()
+    if form.validate_on_submit():
+        # TODO clean up and replace hard coded category and date
+        category = Category(name='Groceries', user=g.user)
+        name = form.title.data
+        date = datetime.now()
+        cost = form.cost.data
+        t = Transaction(name=name, date=date, category=category, cost=cost, user=g.user)
+        db.session.add(t)
+        try:
+            db.session.commit()
+        except IntegrityError:
+            flash("Something went wrong while creating the transaction.")
+            redirect(url_for('index'))
+    return render_template('add_transaction.html', title='New Transaction', form=form)
 
 
 # sets a global field to track lm's current_user before each request
@@ -89,4 +119,13 @@ def before_request():
 @lm.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+
+# ensures g.user is set correctly. this should only return false during special circumstances
+def user_set():
+    if g.user is None or not g.user.is_authenticated:
+        # send an email here?
+        flash('Something went wrong')
+        return False
+    return True
 

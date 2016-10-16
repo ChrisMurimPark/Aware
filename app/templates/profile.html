@@ -1,25 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>{{ user.first_name }} {{ user.last_name }}</h1>
-<h3>Info</h3>
-<p>Email: {{ user.email }}</p>
-<h3>Recent transactions</h3>
-<table>
-    <tr>
-        <th>Name</th>
-        <th>Date</th>
-        <th>Category</th>
-        <th>Cost</th>
-    </tr>
-    {% for t in transactions %}
-    <tr>
-        <td>{{ t.name }}</td>
-        <td>{{ t.date }}</td>
-        <td>{{ t.category }}</td>
-        <td>{{ t.cost }}</td>
-    </tr>
-    {% endfor %}
-</table>
-
+<h1>{{ g.user.first_name }} {{ g.user.last_name }}</h1>
+<p>Email: {{ g.user.email }}</p>
 {% endblock %}
 
