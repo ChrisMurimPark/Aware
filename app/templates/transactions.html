@@ -7,12 +7,13 @@ $(document).ready(function() {
 		"order": [[0,"desc"],[1,"asc"]]
 		}
 		);
+	$('#transactions').show();
 });
 </script>
 <h1>Transactions</h1>
 <a href="{{ url_for('add_transaction') }}">New Transaction</a>
 <br/><br/>
-<table class="display" id="transactions">
+<table hidden="true" class="display" id="transactions">
 	<thead>
 		<tr>
 			<th>Date</th>
