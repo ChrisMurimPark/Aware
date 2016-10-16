@@ -8,6 +8,7 @@
 		<title>{{ title }} - Aware</title>
 	</head>
 	<body>
+		<div id="NavBar">
         {% if g.user.is_authenticated %}
 		<ul>
 			<li><a href="{{ url_for('index') }}">Home</a></li>
@@ -22,8 +23,10 @@
 			<li><a href="{{ url_for('register') }}">Register</a></li>
 		</ul>
         {% endif %}
-		<hr>
+		</div>
+		<div id="Content">
 		{% block content %}{% endblock %}
+		</div>
 	</body>
 </html>
 
