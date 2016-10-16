@@ -1,8 +1,10 @@
 /* 
- * #C63D0F - reddish
- * #3B3738 - blackish
- * #FDF3E7 - whitish
- * #7E8F7C - greenish
+ * #F45642 - reddish
+ * #3B3738 - blackish - lighter
+ * #272324 - blackish - darker
+ * #eeeeee - light gray
+ * #dddddd - medium gray
+ * #cccccc - dark gray
  * */
 html
 {
@@ -50,6 +52,12 @@ li a
 
 li a:hover
 {
-	background-color: #C63D0F;
+	background-color: #272324;
 }
+
+#NavBar .Active
+{
+	background-color: #F45642;
+}
+
 

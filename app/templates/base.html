@@ -11,7 +11,7 @@
 		<div id="NavBar">
         {% if g.user.is_authenticated %}
 		<ul>
-			<li><a href="{{ url_for('index') }}">Home</a></li>
+			<li><a class="Active" href="{{ url_for('index') }}">Home</a></li>
 			<li><a href="{{ url_for('transactions') }}">Transactions</a></li>
 			<li><a href="{{ url_for('categories') }}">Categories</a></li>
 			<li><a href="{{ url_for('profile') }}">Profile</a></li>
