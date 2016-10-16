@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, DateField, SelectField, DecimalField
+from wtforms.fields.html5 import DateField
+from wtforms import StringField, PasswordField, SelectField, DecimalField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, NumberRange
 
 
@@ -18,9 +19,12 @@ class RegisterForm(FlaskForm):
 
 
 class AddTransactionForm(FlaskForm):
-    categories = [(1,'Groceries'), (2,'Coffee Shop'), (3,'Misc')]
+    from datetime import datetime
     title = StringField('name', validators=[DataRequired(),Length(1,120)])
-    date = DateField('date', validators=[DataRequired()])
+    date = DateField('date', default=datetime.today, validators=[DataRequired()])
     cost = DecimalField('cost', validators=[DataRequired(),NumberRange(0)])
-    category = SelectField(coerce=int, label='Category', choices=categories, validators=[DataRequired()])
+    category = SelectField(coerce=int, label='Category', validators=[DataRequired()])
+
+class AddCategoryForm(FlaskForm):
+    name = StringField('name', validators=[DataRequired(),Length(1,120)])
 

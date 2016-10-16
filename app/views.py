@@ -1,6 +1,6 @@
 from app import app, lm, db
 from flask import render_template, redirect, flash, g, request, url_for
-from .forms import LoginForm, RegisterForm, AddTransactionForm
+from .forms import LoginForm, RegisterForm, AddTransactionForm, AddCategoryForm
 from .models import User, Transaction, Category
 from flask_login import login_user, logout_user, current_user, login_required
 from sqlalchemy.exc import IntegrityError
@@ -82,7 +82,7 @@ def transactions():
     if not user_set():
         return redirect(url_for('index'))
     # transactions = [{'name': 'Aldi', 'date': '2016-01-01', 'category': 'Groceries', 'cost': '18.43'},{'name': 'Emerald City Coffee', 'date': '2016-01-02', 'category': 'Coffee Shop', 'cost': '2.80'}]
-    transactions = g.user.transactions.all()
+    transactions = g.user.transactions.order_by(Transaction.date.desc()).all()
     return render_template('transactions.html', transactions=transactions, title='Transactions')
 
 
@@ -93,12 +93,13 @@ def add_transaction():
     if not user_set():
         return redirect(url_for('index'))
     form = AddTransactionForm()
+    form.category.choices = [(c.id, c.name) for c in g.user.categories.all()]
     if form.validate_on_submit():
-        # TODO clean up and replace hard coded category and date
-        category = Category(name='Groceries', user=g.user)
+        category = Category.query.get(form.category.data)
         name = form.title.data
-        date = datetime.now()
+        date = form.date.data
         cost = form.cost.data
+        print(category, name, date, cost)
         t = Transaction(name=name, date=date, category=category, cost=cost, user=g.user)
         db.session.add(t)
         try:
@@ -106,7 +107,34 @@ def add_transaction():
         except IntegrityError:
             flash("Something went wrong while creating the transaction.")
             redirect(url_for('index'))
-    return render_template('add_transaction.html', title='New Transaction', form=form)
+    return render_template('add_transaction.html', title='Transactions', form=form)
+
+
+@app.route('/categories')
+@login_required
+@nocache
+def categories():
+    if not user_set():
+        return redirect(url_for('index'))
+    categories = g.user.categories.all()
+    return render_template('categories.html', categories=categories, title='Categories')
+
+
+@app.route('/add_category', methods=['GET', 'POST'])
+@login_required
+@nocache
+def add_category():
+    if not user_set():
+        return redirect(url_for('index'))
+    form = AddCategoryForm()
+    if form.validate_on_submit():
+        db.session.add(Category(name=form.name.data, user=g.user))
+        try:
+            db.session.commit()
+        except IntegrityError:
+            flash("Something went wrong while creating the transaction.")
+            redirect(url_for('index'))
+    return render_template('add_category.html', title='Categories', form=form)
 
 
 # sets a global field to track lm's current_user before each request

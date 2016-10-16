@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Categories</h1>
+<a href="{{ url_for('add_category') }}">New Category</a>
+<table>
+    <tr>
+        <th>Name</th>
+    </tr>
+    {% for c in categories %}
+    <tr>
+        <td>{{ c.name }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
+
