@@ -81,7 +81,6 @@ def profile():
 def transactions():
     if not user_set():
         return redirect(url_for('index'))
-    # transactions = [{'name': 'Aldi', 'date': '2016-01-01', 'category': 'Groceries', 'cost': '18.43'},{'name': 'Emerald City Coffee', 'date': '2016-01-02', 'category': 'Coffee Shop', 'cost': '2.80'}]
     transactions = g.user.transactions.order_by(Transaction.date.desc()).all()
     return render_template('transactions.html', transactions=transactions, title='Transactions')
 
