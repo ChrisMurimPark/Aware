@@ -41,6 +41,11 @@ li
 	float: left;
 }
 
+.Right
+{
+	float: right;
+}
+
 li a 
 {
 	display: block;

@@ -9,20 +9,20 @@
 	</head>
 	<body>
 		<div id="NavBar">
-        {% if g.user.is_authenticated %}
-		<ul>
-			<li><a class="Active" href="{{ url_for('index') }}">Home</a></li>
-			<li><a href="{{ url_for('transactions') }}">Transactions</a></li>
-			<li><a href="{{ url_for('categories') }}">Categories</a></li>
-			<li><a href="{{ url_for('profile') }}">Profile</a></li>
-			<li><a href="{{ url_for('logout') }}">Log Out</a></li>
-		</ul>
-        {% else %}
-		<ul>
-			<li><a href="{{ url_for('login') }}">Log In</a></li>
-			<li><a href="{{ url_for('register') }}">Register</a></li>
-		</ul>
-        {% endif %}
+			{% if g.user.is_authenticated %}
+			<ul>
+				<li><a id="Home" href="{{ url_for('index') }}">Home</a></li>
+				<li><a id="Transactions" href="{{ url_for('transactions') }}">Transactions</a></li>
+				<li><a id="Categories" href="{{ url_for('categories') }}">Categories</a></li>
+				<li><a id="Profile" href="{{ url_for('profile') }}">Profile</a></li>
+				<li class="Right"><a href="{{ url_for('logout') }}">Log Out</a></li>
+			</ul>
+			{% else %}
+			<ul>
+				<li><a id="Login" href="{{ url_for('login') }}">Log In</a></li>
+				<li><a id="Register" href="{{ url_for('register') }}">Register</a></li>
+			</ul>
+			{% endif %}
 		</div>
 		<div id="Content">
 		{% block content %}{% endblock %}

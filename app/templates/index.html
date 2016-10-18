@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#NavBar #Home').addClass('Active');
+	});
+</script>
 <h1>Welcome to Aware</h1>
 {% with messages = get_flashed_messages() %}
 	{% if messages %}

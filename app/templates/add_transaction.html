@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#NavBar #Transactions').addClass('Active');
+	});
+</script>
+
 <h1>Add Transaction</h1>
 <form action="" method="post" name="add_transaction">
     {{ form.hidden_tag() }}

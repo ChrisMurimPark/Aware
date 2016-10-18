@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#NavBar #Profile').addClass('Active');
+	});
+</script>
 <h1>{{ g.user.first_name }} {{ g.user.last_name }}</h1>
 <p>Email: {{ g.user.email }}</p>
 {% endblock %}
