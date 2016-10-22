@@ -13,3 +13,8 @@ import_data.py
 scripts/export_data.py
 wipe_tests.py
 
+# DS_Store
+.DS_Store
+
+# db files
+*.db
