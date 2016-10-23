@@ -3,20 +3,54 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	$('#NavBar #Transactions').addClass('Active');
-	$('#transactions').DataTable(
-		{
-		"order": [[0,"desc"]]
-		}
-		);
+	var table = $('#transactions').DataTable({
+		// hide id column
+		columnDefs: [{ "targets": [0], "visible":false, "searchable":false }],
+
+		order: [[1,"desc"]],
+
+		select: { style: 'multi' },
+
+		buttons: [
+			{
+				// Select only filtered rows
+				text: 'Select all',
+				action: function() {
+					table.rows({ search: "applied" }).select();
+				}
+			}, 'selectNone'],
+
+		dom: 'lfrtBpi'
+	});
+
 	$('#transactions').show();
+
+	$(function() {
+		$('#delete_selected').on('click', function() {
+			var data = table.rows({ selected: true }).data();
+			var ids = $.map(data, function(value, index) {
+				return [value[0]];
+			});
+			var params = {};
+			params.ids = ids;
+			$.ajax({
+				url: $SCRIPT_ROOT + '/delete_transactions',
+				data: { data: $.param(params, true) },
+				success: function(response) {
+					location.reload();
+				}
+			});
+		});
+	});
 });
 </script>
 <h1>Transactions</h1>
 <a href="{{ url_for('add_transaction') }}">New Transaction</a>
 <br/><br/>
-<table hidden="true" class="display" id="transactions">
+<table hidden="true" class="display select" id="transactions" width="100%">
 	<thead>
 		<tr>
+			<th>ID</th>
 			<th>Date</th>
 			<th>Name</th>
 			<th>Category</th>
@@ -26,6 +60,7 @@ $(document).ready(function() {
 	<tbody>
 		{% for t in transactions %}
 		<tr>
+			<td>{{ t.id }}</td>
 			<td>{{ t.date }}</td>
 			<td>{{ t.name }}</td>
 			<td>{{ t.category.name }}</td>
@@ -34,5 +69,14 @@ $(document).ready(function() {
 		{% endfor %}
 	</tbody>
 </table>
+<br/>
+<button id="delete_selected">Delete Selected</button>
+{% with messages = get_flashed_messages() %} 
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
 {% endblock %}
 

@@ -1,11 +1,12 @@
 from app import app, lm, db
-from flask import render_template, redirect, flash, g, request, url_for
+from flask import render_template, redirect, flash, g, request, url_for, jsonify
 from .forms import LoginForm, RegisterForm, AddTransactionForm, AddCategoryForm
 from .models import User, Transaction, Category
 from flask_login import login_user, logout_user, current_user, login_required
 from sqlalchemy.exc import IntegrityError
 from .nocache import nocache
 import bcrypt
+import re
 from datetime import datetime
 
 
@@ -98,7 +99,6 @@ def add_transaction():
         name = form.title.data
         date = form.date.data
         cost = form.cost.data
-        print(category, name, date, cost)
         t = Transaction(name=name, date=date, category=category, cost=cost, user=g.user)
         db.session.add(t)
         try:
@@ -107,6 +107,26 @@ def add_transaction():
             flash("Something went wrong while creating the transaction.")
             redirect(url_for('index'))
     return render_template('add_transaction.html', title='Transactions', form=form)
+
+
+@app.route('/delete_transactions', methods=['GET', 'POST'])
+@login_required
+@nocache
+def delete_transaction():
+    data = request.args.get('data')
+    pattern = re.compile('[0-9]+')
+    ids = pattern.findall(data)
+    for d in ids:
+        if d is not -1:
+            transaction = Transaction.query.filter(Transaction.id == d).first() 
+            db.session.delete(transaction)
+    try:
+        db.session.commit()
+    except IntegrityError:
+        flash("Sorry! Something went wrong while deleting the transaction(s).")
+        return jsonify(result="Sorry!")
+    flash("Successfully deleted transaction(s).")
+    return jsonify("Success!")
 
 
 @app.route('/categories')
