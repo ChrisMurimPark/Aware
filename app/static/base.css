@@ -65,4 +65,37 @@ li a:hover
 	background-color: #F45642;
 }
 
+.button
+{
+	color: black;
+	background-color: #fff;
+	border: 1px solid #999;
+	border-radius: 2px;
+	padding: 8px 16px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 16px;
+	cursor: pointer;
+}
+
+.button.delete:hover
+{
+	color: white;
+	background-color: red;
+	border: 1px solid red;
+}
+
+.button.new:active,
+.button.delete:active
+{
+	background-color: #e2e2e2;
+	border: 1px solid #3b3738;
+}
+
+.button.new
+{
+	color: white;
+	background-color: #00cc00;
+	border: 1px solid #00cc00;
+}
 

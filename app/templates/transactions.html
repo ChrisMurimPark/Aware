@@ -45,7 +45,7 @@ $(document).ready(function() {
 });
 </script>
 <h1>Transactions</h1>
-<a href="{{ url_for('add_transaction') }}">New Transaction</a>
+<a class="button new" href="{{ url_for('add_transaction') }}">New Transaction</a>
 <br/><br/>
 <table hidden="true" class="display select" id="transactions" width="100%">
 	<thead>
@@ -70,7 +70,7 @@ $(document).ready(function() {
 	</tbody>
 </table>
 <br/>
-<button id="delete_selected">Delete Selected</button>
+<button class="button delete" id="delete_selected">Delete Selected</button>
 {% with messages = get_flashed_messages() %} 
     {% if messages %}
         {% for message in messages %}
