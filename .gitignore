@@ -18,3 +18,7 @@ wipe_tests.py
 
 # db files
 *.db
+
+# data files
+categories
+transactions
