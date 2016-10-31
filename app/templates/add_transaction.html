@@ -25,6 +25,10 @@
     {% for error in form.category.errors %}
     <p class="error">[{{ error }}]</p>
     {% endfor %}
+    <p>Another? {{ form.another() }}</p>
+    {% for error in form.another.errors %}
+    <p class="error">[{{ error }}]</p>
+    {% endfor %}
     <p><input type="submit" value="Add"/></p>
 </form>
 {% endblock %}

@@ -2,6 +2,7 @@ from app import app, lm, db
 from flask import render_template, redirect, flash, g, request, url_for, jsonify
 from .forms import LoginForm, RegisterForm, AddTransactionForm, AddCategoryForm
 from .models import User, Transaction, Category
+from .analytics import get_spending_by_category
 from flask_login import login_user, logout_user, current_user, login_required
 from sqlalchemy.exc import IntegrityError
 from .nocache import nocache
@@ -99,6 +100,7 @@ def add_transaction():
         name = form.title.data
         date = form.date.data
         cost = form.cost.data
+        another = form.another.data
         t = Transaction(name=name, date=date, category=category, cost=cost, user=g.user)
         db.session.add(t)
         try:
@@ -106,6 +108,10 @@ def add_transaction():
         except IntegrityError:
             flash("Something went wrong while creating the transaction.")
             redirect(url_for('index'))
+        if not another:
+            return redirect(url_for('transactions'))
+        else:
+            return redirect(url_for('add_transaction'))
     return render_template('add_transaction.html', title='Transactions', form=form)
 
 
@@ -156,6 +162,16 @@ def add_category():
     return render_template('add_category.html', title='Categories', form=form)
 
 
+@app.route('/analytics')
+@login_required
+@nocache
+def analytics():
+    if not user_set():
+        return redirect(url_for('index'))
+    category_data = get_spending_by_category(1)
+    return render_template('analytics.html', title='Analytics', by_category=category_data)
+
+   
 # sets a global field to track lm's current_user before each request
 @app.before_request
 def before_request():
@@ -171,7 +187,7 @@ def load_user(id):
 # ensures g.user is set correctly. this should only return false during special circumstances
 def user_set():
     if g.user is None or not g.user.is_authenticated:
-        # send an email here?
+        # log here
         flash('Something went wrong')
         return False
     return True

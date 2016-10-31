@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms.fields.html5 import DateField
-from wtforms import StringField, PasswordField, SelectField, DecimalField
+from wtforms import StringField, PasswordField, SelectField, DecimalField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, NumberRange
 
 
@@ -23,8 +23,15 @@ class AddTransactionForm(FlaskForm):
     title = StringField('name', validators=[DataRequired(),Length(1,120)])
     date = DateField('date', default=datetime.today, validators=[DataRequired()])
     cost = DecimalField('cost', validators=[DataRequired(),NumberRange(0)])
-    category = SelectField(coerce=int, label='Category', validators=[DataRequired()])
+    category = SelectField('category', coerce=int, validators=[DataRequired()])
+    another = BooleanField('another', default=False)
+
 
 class AddCategoryForm(FlaskForm):
     name = StringField('name', validators=[DataRequired(),Length(1,120)])
+
+
+class StartEndDateForm(FlaskForm):
+    start = DateField('start', validators=[DataRequired()])
+    end = DateField('end', validators=[DataRequired()])
 

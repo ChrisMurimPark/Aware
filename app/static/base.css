@@ -1,5 +1,6 @@
 /* 
  * #F45642 - reddish
+ * #3594FA - blue
  * #3B3738 - blackish - lighter
  * #272324 - blackish - darker
  * #eeeeee - light gray
@@ -95,7 +96,7 @@ li a:hover
 .button.new
 {
 	color: white;
-	background-color: #00cc00;
-	border: 1px solid #00cc00;
+	background-color: #3594FA;
+	border: 1px solid #3594FA;
 }
 
