@@ -168,7 +168,7 @@ def add_category():
 def analytics():
     if not user_set():
         return redirect(url_for('index'))
-    category_data = get_spending_by_category(1)
+    category_data = get_spending_by_category(4)
     return render_template('analytics.html', title='Analytics', by_category=category_data)
 
    

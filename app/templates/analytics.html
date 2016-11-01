@@ -4,10 +4,24 @@
 	$(document).ready(function() {
 		$('#NavBar #Analytics').addClass('Active');
 	});
+	
+	google.charts.load('current', {'packages':['corechart']});
+	google.charts.setOnLoadCallback(drawChart);
+
+	function drawChart() {
+		var data = new google.visualization.DataTable();
+		data.addColumn('string', 'Category');
+		data.addColumn('number', 'Cost');
+		var by_category = document.getElementsByClassName('chart_data_by_category');
+		{% for item in by_category %}
+			data.addRow(["{{item[0]}}", {{item[1]}}]);
+		{% endfor %}
+		var options = {'title':'Spending by Category', 'width':800, 'height':500, 'pieHole':0.4};
+		var table = new google.visualization.PieChart(document.getElementById('chart_div_by_category'));
+		table.draw(data, options);
+	}
 </script>
 <h1>Analytics</h1>
-{% for key, value in by_category.items() %}
-    <p>{{ key }}: {{ value }}</p>
-{% endfor %}
+<div id="chart_div_by_category"></div>
 {% endblock %}
 

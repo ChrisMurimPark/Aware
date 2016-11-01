@@ -42,11 +42,7 @@ def get_spending_by_category(date_range_id=0):
     with_cols = joined_table.add_columns(Category.user_id, Category.name, func.sum(Transaction.cost).label("cost"))
     with_filters = with_cols.filter_by(user_id = g.user.id).filter(Transaction.date.between(start, end))
     grouped = with_filters.group_by(Transaction.category_id)
+    final = grouped.order_by(func.sum(Transaction.cost).desc())
 
-    total_cost = reduce((lambda x, y: x + y), [entry.cost for entry in grouped])
-    Stats = namedtuple('Stats', ['cost', 'percentage'])
-    results = dict()
-    for entry in grouped:
-        results[entry.name] = Stats(entry.cost, entry.cost/total_cost)
-    return results
-
+    return [[entry.name, entry.cost] for entry in final]
+    
