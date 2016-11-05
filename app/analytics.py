@@ -46,3 +46,7 @@ def get_spending_by_category(date_range_id=0):
 
     return [[entry.name, entry.cost] for entry in final]
     
+@login_required
+def get_total_spending():
+    return db.session.query(func.sum(Transaction.cost).label("total_cost")).first()[0]
+

@@ -2,7 +2,7 @@ from app import app, lm, db
 from flask import render_template, redirect, flash, g, request, url_for, jsonify
 from .forms import LoginForm, RegisterForm, AddTransactionForm, AddCategoryForm
 from .models import User, Transaction, Category
-from .analytics import get_spending_by_category
+from .analytics import get_spending_by_category, get_total_spending
 from flask_login import login_user, logout_user, current_user, login_required
 from sqlalchemy.exc import IntegrityError
 from .nocache import nocache
@@ -169,7 +169,8 @@ def analytics():
     if not user_set():
         return redirect(url_for('index'))
     category_data = get_spending_by_category(4)
-    return render_template('analytics.html', title='Analytics', by_category=category_data)
+    total_cost = '${:,.2f}'.format(get_total_spending())
+    return render_template('analytics.html', title='Analytics', by_category=category_data, total=total_cost)
 
    
 # sets a global field to track lm's current_user before each request
