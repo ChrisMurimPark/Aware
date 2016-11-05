@@ -1,6 +1,6 @@
 from app import app, lm, db
 from flask import render_template, redirect, flash, g, request, url_for, jsonify
-from .forms import LoginForm, RegisterForm, AddTransactionForm, AddCategoryForm
+from .forms import LoginForm, RegisterForm, AddTransactionForm, AddCategoryForm, StartEndDateForm
 from .models import User, Transaction, Category
 from .analytics import get_spending_by_category, get_total_spending
 from flask_login import login_user, logout_user, current_user, login_required
@@ -8,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from .nocache import nocache
 import bcrypt
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 @app.route('/')
@@ -158,19 +158,26 @@ def add_category():
             db.session.commit()
         except IntegrityError:
             flash("Something went wrong while creating the transaction.")
-            redirect(url_for('index'))
+            return redirect(url_for('index'))
+        return redirect(url_for('categories'))
     return render_template('add_category.html', title='Categories', form=form)
 
 
-@app.route('/analytics')
+@app.route('/analytics', methods=['GET','POST'])
 @login_required
 @nocache
 def analytics():
     if not user_set():
         return redirect(url_for('index'))
-    category_data = get_spending_by_category(4)
-    total_cost = '${:,.2f}'.format(get_total_spending())
-    return render_template('analytics.html', title='Analytics', by_category=category_data, total=total_cost)
+    form = StartEndDateForm()
+    start = datetime.today() - timedelta(weeks=1)
+    end = datetime.today()
+    if form.validate_on_submit():
+        start = form.start.data
+        end = form.end.data
+    category_data = get_spending_by_category(start, end)
+    total_cost = '${:,.2f}'.format(get_total_spending(start, end))
+    return render_template('analytics.html', title='Analytics', form=form, by_category=category_data, total=total_cost)
 
    
 # sets a global field to track lm's current_user before each request

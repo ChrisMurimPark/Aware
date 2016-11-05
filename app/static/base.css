@@ -26,6 +26,11 @@ body
 	background-color: #3B3738;
 }
 
+input
+{
+	vertical-align: middle;
+}
+
 #Content
 {
 	margin-left: 20px;

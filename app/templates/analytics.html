@@ -22,6 +22,10 @@
 	}
 </script>
 <h1>Analytics</h1>
+<form action="" class="form" method="post" name="date_filter">
+    {{ form.hidden_tag() }}
+	<p>Start: {{ form.start() }} End: {{ form.end() }} <input type="submit" value="Filter"/></p>
+</form>
 <div id="chart_div_by_category"></div>
 <h3>Total Cost: {{ total }}</h3>
 {% endblock %}
