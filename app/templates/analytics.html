@@ -13,8 +13,10 @@
 		data.addColumn('string', 'Category');
 		data.addColumn('number', 'Cost');
 		var by_category = document.getElementsByClassName('chart_data_by_category');
+        var drawTable = false;
 		{% for item in by_category %}
 			data.addRow(["{{item[0]}}", {{item[1]}}]);
+            drawTable = true;
 		{% endfor %}
 		var options = {
 			'title':'Spending by Category', 
@@ -24,7 +26,7 @@
 			'chartArea':{'width':'80%', 'height':'80%'}
 		};
 		var table = new google.visualization.PieChart(document.getElementById('chart_div_by_category'));
-		table.draw(data, options);
+        if (drawTable) { table.draw(data, options); }
 	}
 </script>
 <h1>Analytics</h1>

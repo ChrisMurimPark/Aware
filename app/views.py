@@ -176,8 +176,11 @@ def analytics():
         start = form.start.data
         end = form.end.data
     category_data = get_spending_by_category(start, end)
-    total_cost = '${:,.2f}'.format(get_total_spending(start, end))
-    return render_template('analytics.html', title='Analytics', form=form, by_category=category_data, total=total_cost)
+    total_cost_pretty = '$0.00'
+    total_cost = get_total_spending(start, end)
+    if total_cost is not None:
+        total_cost_pretty = '${:,.2f}'.format(total_cost)
+    return render_template('analytics.html', title='Analytics', form=form, by_category=category_data, total=total_cost_pretty)
 
    
 # sets a global field to track lm's current_user before each request
