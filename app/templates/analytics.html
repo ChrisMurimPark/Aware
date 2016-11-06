@@ -16,7 +16,13 @@
 		{% for item in by_category %}
 			data.addRow(["{{item[0]}}", {{item[1]}}]);
 		{% endfor %}
-		var options = {'title':'Spending by Category', 'width':800, 'height':500, 'pieHole':0.4};
+		var options = {
+			'title':'Spending by Category', 
+			'width':800, 
+			'height':500, 
+			'pieHole':0.4,
+			'chartArea':{'width':'80%', 'height':'80%'}
+		};
 		var table = new google.visualization.PieChart(document.getElementById('chart_div_by_category'));
 		table.draw(data, options);
 	}
@@ -26,7 +32,7 @@
     {{ form.hidden_tag() }}
 	<p>Start: {{ form.start() }} End: {{ form.end() }} <input type="submit" value="Filter"/></p>
 </form>
-<div id="chart_div_by_category"></div>
 <h3>Total Cost: {{ total }}</h3>
+<div id="chart_div_by_category"></div>
 {% endblock %}
 
