@@ -22,3 +22,6 @@ wipe_tests.py
 # data files
 categories
 transactions
+
+# swp files
+*.swp

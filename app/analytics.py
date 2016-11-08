@@ -4,7 +4,7 @@ from flask_login import login_required
 from .models import User, Transaction, Category
 from sqlalchemy.sql import func
 from sqlalchemy.exc import IntegrityError
-from datetime import datetime, timedelta
+from datetime import datetime
 from functools import reduce
 from collections import namedtuple
 

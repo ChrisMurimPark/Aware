@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms.fields.html5 import DateField
-from wtforms import StringField, PasswordField, SelectField, DecimalField, BooleanField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, NumberRange
+from wtforms import StringField, PasswordField, SelectField, DecimalField, BooleanField, IntegerField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, NumberRange, Required
 
 
 class LoginForm(FlaskForm):
@@ -18,12 +18,22 @@ class RegisterForm(FlaskForm):
             validators=[DataRequired(),EqualTo('password', message='Passwords do not match')])
 
 
-class AddTransactionForm(FlaskForm):
+class AddTransactionSingleForm(FlaskForm):
     from datetime import datetime
     title = StringField('name', validators=[DataRequired(),Length(1,120)])
     date = DateField('date', default=datetime.today, validators=[DataRequired()])
     cost = DecimalField('cost', validators=[DataRequired(),NumberRange(0)])
     category = SelectField('category', coerce=int, validators=[DataRequired()])
+    another = BooleanField('another', default=False)
+
+class AddTransactionOverTimeForm(FlaskForm):
+    from datetime import datetime
+    title = StringField('name', validators=[DataRequired(),Length(1,120)])
+    date = DateField('date', default=datetime.today, validators=[DataRequired()])
+    cost = DecimalField('cost', validators=[DataRequired(),NumberRange(0)])
+    category = SelectField('category', coerce=int, validators=[DataRequired()])
+    frequency = SelectField('frequency', coerce=int, validators=[DataRequired()])
+    occurrences = IntegerField('occurrences', validators=[DataRequired(),NumberRange(2)])
     another = BooleanField('another', default=False)
 
 

@@ -1,6 +1,6 @@
 from app import app, lm, db
 from flask import render_template, redirect, flash, g, request, url_for, jsonify
-from .forms import LoginForm, RegisterForm, AddTransactionForm, AddCategoryForm, StartEndDateForm
+from .forms import LoginForm, RegisterForm, AddTransactionSingleForm, AddTransactionOverTimeForm, AddCategoryForm, StartEndDateForm
 from .models import User, Transaction, Category
 from .analytics import get_spending_by_category, get_total_spending
 from flask_login import login_user, logout_user, current_user, login_required
@@ -9,6 +9,7 @@ from .nocache import nocache
 import bcrypt
 import re
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 
 @app.route('/')
@@ -87,13 +88,60 @@ def transactions():
     return render_template('transactions.html', transactions=transactions, title='Transactions')
 
 
-@app.route('/add_transaction', methods=['GET', 'POST'])
+@app.route('/add_transaction')
 @login_required
 @nocache
 def add_transaction():
     if not user_set():
         return redirect(url_for('index'))
-    form = AddTransactionForm()
+    return render_template('add_transaction.html', title='Transactions')
+
+
+@app.route('/add_transaction/over_time', methods=['GET', 'POST'])
+@login_required
+@nocache
+def add_transaction_over_time():
+    if not user_set():
+        return redirect(url_for('index'))
+    form = AddTransactionOverTimeForm()
+    form.category.choices = [(c.id, c.name) for c in g.user.categories.all()]
+    form.frequency.choices = [(0, 'Daily'), (1, 'Weekly'), (2, 'Monthly')]
+    if form.validate_on_submit():
+        category = Category.query.get(form.category.data)
+        name = form.title.data
+        date = form.date.data
+        cost = form.cost.data
+        another = form.another.data
+        freq = form.frequency.data
+        occurrences = form.occurrences.data
+        time = timedelta(1)
+        if freq is 1:
+            time = timedelta(weeks=1)
+        elif freq is 2:
+            time = relativedelta(months=+1)
+        for i in range(occurrences):
+            t = Transaction(name=name, date=date, category=category, cost=cost/occurrences, user=g.user)
+            db.session.add(t)
+            date += time
+        try:
+            db.session.commit()
+        except IntegrityError:
+            flash("Something went wrong while creating the transaction.")
+            redirect(url_for('index'))
+        if not another:
+            return redirect(url_for('transactions'))
+        else:
+            return redirect(url_for('add_transaction_over_time'))
+    return render_template('add_transaction_over_time.html', title='Transactions', form=form)
+
+
+@app.route('/add_transaction/single', methods=['GET', 'POST'])
+@login_required
+@nocache
+def add_transaction_single():
+    if not user_set():
+        return redirect(url_for('index'))
+    form = AddTransactionSingleForm()
     form.category.choices = [(c.id, c.name) for c in g.user.categories.all()]
     if form.validate_on_submit():
         category = Category.query.get(form.category.data)
@@ -111,8 +159,8 @@ def add_transaction():
         if not another:
             return redirect(url_for('transactions'))
         else:
-            return redirect(url_for('add_transaction'))
-    return render_template('add_transaction.html', title='Transactions', form=form)
+            return redirect(url_for('add_transaction_single'))
+    return render_template('add_transaction_single.html', title='Transactions', form=form)
 
 
 @app.route('/delete_transactions', methods=['GET', 'POST'])
