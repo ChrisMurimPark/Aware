@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#NavBar #Transactions').addClass('Active');
+	});
+</script>
+
+<h1>{{ result }}</h1>
+<a class="button new" href="{{ url_for('transactions') }}">Back</a>
+<a class="button new" href="{{ url_for('add_transaction') }}">Add Another</a>
+{% endblock %}
+

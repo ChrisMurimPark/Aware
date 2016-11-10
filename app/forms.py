@@ -24,7 +24,6 @@ class AddTransactionSingleForm(FlaskForm):
     date = DateField('date', default=datetime.today, validators=[DataRequired()])
     cost = DecimalField('cost', validators=[DataRequired(),NumberRange(0)])
     category = SelectField('category', coerce=int, validators=[DataRequired()])
-    another = BooleanField('another', default=False)
 
 class AddTransactionOverTimeForm(FlaskForm):
     from datetime import datetime
@@ -34,7 +33,6 @@ class AddTransactionOverTimeForm(FlaskForm):
     category = SelectField('category', coerce=int, validators=[DataRequired()])
     frequency = SelectField('frequency', coerce=int, validators=[DataRequired()])
     occurrences = IntegerField('occurrences', validators=[DataRequired(),NumberRange(2)])
-    another = BooleanField('another', default=False)
 
 
 class AddCategoryForm(FlaskForm):

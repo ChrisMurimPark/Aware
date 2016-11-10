@@ -105,19 +105,18 @@ def add_transaction_over_time():
         return redirect(url_for('index'))
     form = AddTransactionOverTimeForm()
     form.category.choices = [(c.id, c.name) for c in g.user.categories.all()]
-    form.frequency.choices = [(0, 'Daily'), (1, 'Weekly'), (2, 'Monthly')]
+    form.frequency.choices = [(1, 'Daily'), (2, 'Weekly'), (3, 'Monthly')]
     if form.validate_on_submit():
         category = Category.query.get(form.category.data)
         name = form.title.data
         date = form.date.data
         cost = form.cost.data
-        another = form.another.data
         freq = form.frequency.data
         occurrences = form.occurrences.data
         time = timedelta(1)
-        if freq is 1:
+        if freq is 2:
             time = timedelta(weeks=1)
-        elif freq is 2:
+        elif freq is 3:
             time = relativedelta(months=+1)
         for i in range(occurrences):
             t = Transaction(name=name, date=date, category=category, cost=cost/occurrences, user=g.user)
@@ -127,11 +126,8 @@ def add_transaction_over_time():
             db.session.commit()
         except IntegrityError:
             flash("Something went wrong while creating the transaction.")
-            redirect(url_for('index'))
-        if not another:
-            return redirect(url_for('transactions'))
-        else:
-            return redirect(url_for('add_transaction_over_time'))
+            return redirect(url_for('index'))
+        return redirect(url_for('add_transaction_result'))
     return render_template('add_transaction_over_time.html', title='Transactions', form=form)
 
 
@@ -148,19 +144,24 @@ def add_transaction_single():
         name = form.title.data
         date = form.date.data
         cost = form.cost.data
-        another = form.another.data
         t = Transaction(name=name, date=date, category=category, cost=cost, user=g.user)
         db.session.add(t)
         try:
             db.session.commit()
         except IntegrityError:
             flash("Something went wrong while creating the transaction.")
-            redirect(url_for('index'))
-        if not another:
-            return redirect(url_for('transactions'))
-        else:
-            return redirect(url_for('add_transaction_single'))
+            return redirect(url_for('index'))
+        return redirect(url_for('add_transaction_result'))
     return render_template('add_transaction_single.html', title='Transactions', form=form)
+
+
+@app.route('/add_transaction/result')
+@login_required
+@nocache
+def add_transaction_result():
+    if not user_set():
+        return redirect(url_for('index'))
+    return render_template('add_transaction_result.html', title='Transactions', result='Success!')
 
 
 @app.route('/delete_transactions', methods=['GET', 'POST'])
