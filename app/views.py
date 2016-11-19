@@ -190,7 +190,7 @@ def delete_transaction():
 def categories():
     if not user_set():
         return redirect(url_for('index'))
-    categories = g.user.categories.all()
+    categories = g.user.categories.order_by(Category.name).all()
     return render_template('categories.html', categories=categories, title='Categories')
 
 
