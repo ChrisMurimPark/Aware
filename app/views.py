@@ -1,14 +1,17 @@
 from app import app, lm, db
 from flask import render_template, redirect, flash, g, request, url_for, jsonify
+from flask_login import login_user, logout_user, current_user, login_required
+from sqlalchemy.exc import IntegrityError
+
 from .forms import LoginForm, RegisterForm, AddTransactionSingleForm, AddTransactionOverTimeForm, AddCategoryForm, StartEndDateForm
 from .models import User, Transaction, Category
 from .analytics import get_spending_by_category, get_total_spending
-from flask_login import login_user, logout_user, current_user, login_required
-from sqlalchemy.exc import IntegrityError
+from .aware_utils import first_day_current_month, last_day_current_month
 from .nocache import nocache
+
 import bcrypt
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from dateutil.relativedelta import relativedelta
 
 
@@ -104,7 +107,7 @@ def add_transaction_over_time():
     if not user_set():
         return redirect(url_for('index'))
     form = AddTransactionOverTimeForm()
-    form.category.choices = [(c.id, c.name) for c in g.user.categories.all()]
+    form.category.choices = [(c.id, c.name) for c in g.user.categories.order_by(Category.name).all()]
     form.frequency.choices = [(1, 'Daily'), (2, 'Weekly'), (3, 'Monthly')]
     if form.validate_on_submit():
         category = Category.query.get(form.category.data)
@@ -138,7 +141,7 @@ def add_transaction_single():
     if not user_set():
         return redirect(url_for('index'))
     form = AddTransactionSingleForm()
-    form.category.choices = [(c.id, c.name) for c in g.user.categories.all()]
+    form.category.choices = [(c.id, c.name) for c in g.user.categories.order_by(Category.name).all()]
     if form.validate_on_submit():
         category = Category.query.get(form.category.data)
         name = form.title.data
@@ -162,7 +165,6 @@ def add_transaction_result():
     if not user_set():
         return redirect(url_for('index'))
     return render_template('add_transaction_result.html', title='Transactions', result='Success!')
-
 
 @app.route('/delete_transactions', methods=['GET', 'POST'])
 @login_required
@@ -219,8 +221,8 @@ def analytics():
     if not user_set():
         return redirect(url_for('index'))
     form = StartEndDateForm()
-    start = datetime.today() - timedelta(weeks=1)
-    end = datetime.today()
+    start = first_day_current_month()
+    end = last_day_current_month()
     if form.validate_on_submit():
         start = form.start.data
         end = form.end.data

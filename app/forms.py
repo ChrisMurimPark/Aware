@@ -40,9 +40,8 @@ class AddCategoryForm(FlaskForm):
 
 
 class StartEndDateForm(FlaskForm):
-    from datetime import datetime, timedelta
     # no validators are required for these fields because there is a default
     # value used if none is provided
-    start = DateField('start', default=datetime.today() - timedelta(weeks=1))
-    end = DateField('end', default=datetime.today)
-
+    from .aware_utils import first_day_current_month, last_day_current_month
+    start = DateField('start', default=first_day_current_month())
+    end = DateField('end', default=last_day_current_month())
