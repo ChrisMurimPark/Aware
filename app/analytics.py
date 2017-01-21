@@ -17,7 +17,7 @@ Spending by category last week, 30 days, 6 months, year
 # has total and percentage values. between start and end dates.
 @login_required
 def get_spending_by_category(start, end):
-    # construct a query to select cost gropued by category for user
+    # construct a query to select cost grouped by category for user
     joined_table = db.session.query(Category).join(Category.transactions)
     with_cols = joined_table.add_columns(Category.user_id, Category.name, func.sum(Transaction.cost).label("cost"))
     with_filters = with_cols.filter_by(user_id = g.user.id).filter(Transaction.date.between(start, end))
@@ -27,5 +27,8 @@ def get_spending_by_category(start, end):
     
 @login_required
 def get_total_spending(start, end):
-    return db.session.query(func.sum(Transaction.cost).label("total_cost")).filter(Transaction.date.between(start, end)).first()[0]
+    # construct a query to select the total cost between dates for user
+    total_cost = db.session.query(func.sum(Transaction.cost).label("total_cost"))
+    with_filters = total_cost.filter_by(user_id = g.user.id).filter(Transaction.date.between(start, end))
+    return with_filters.first()[0]
 
