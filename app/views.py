@@ -26,8 +26,7 @@ def index():
 
 @app.route('/login', methods=['GET','POST'])
 def login():
-    # check if user is already logged in
-    if g.user is not None and g.user.is_authenticated:
+    if user_set():
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
@@ -52,6 +51,8 @@ def logout():
 
 @app.route('/register', methods=['GET','POST'])
 def register():
+    if user_set():
+        return redirect(url_for('index'))
     form = RegisterForm()
     if form.validate_on_submit():
         user = User(first_name=form.first_name.data,
@@ -74,9 +75,7 @@ def register():
 @login_required
 @nocache
 def profile():
-    if g.user is None or not g.user.is_authenticated:
-        # send an email here?
-        flash('Something went wrong')
+    if not user_set():
         return redirect(url_for('index'))
     return render_template('profile.html', title='Profile')
 
@@ -85,8 +84,6 @@ def profile():
 @login_required
 @nocache
 def transactions():
-    if not user_set():
-        return redirect(url_for('index'))
     transactions = g.user.transactions.order_by(Transaction.date.desc()).all()
     return render_template('transactions.html', transactions=transactions, title='Transactions')
 
@@ -95,8 +92,6 @@ def transactions():
 @login_required
 @nocache
 def add_transaction():
-    if not user_set():
-        return redirect(url_for('index'))
     return render_template('add_transaction.html', title='Transactions')
 
 
@@ -104,8 +99,6 @@ def add_transaction():
 @login_required
 @nocache
 def add_transaction_over_time():
-    if not user_set():
-        return redirect(url_for('index'))
     form = AddTransactionOverTimeForm()
     form.category.choices = [(c.id, c.name) for c in g.user.categories.order_by(Category.name).all()]
     form.frequency.choices = [(1, 'Daily'), (2, 'Weekly'), (3, 'Monthly')]
@@ -138,8 +131,6 @@ def add_transaction_over_time():
 @login_required
 @nocache
 def add_transaction_single():
-    if not user_set():
-        return redirect(url_for('index'))
     form = AddTransactionSingleForm()
     form.category.choices = [(c.id, c.name) for c in g.user.categories.order_by(Category.name).all()]
     if form.validate_on_submit():
@@ -162,8 +153,6 @@ def add_transaction_single():
 @login_required
 @nocache
 def add_transaction_result():
-    if not user_set():
-        return redirect(url_for('index'))
     return render_template('add_transaction_result.html', title='Transactions', result='Success!')
 
 @app.route('/delete_transactions', methods=['GET', 'POST'])
@@ -190,8 +179,6 @@ def delete_transaction():
 @login_required
 @nocache
 def categories():
-    if not user_set():
-        return redirect(url_for('index'))
     categories = g.user.categories.order_by(Category.name).all()
     return render_template('categories.html', categories=categories, title='Categories')
 
@@ -200,8 +187,6 @@ def categories():
 @login_required
 @nocache
 def add_category():
-    if not user_set():
-        return redirect(url_for('index'))
     form = AddCategoryForm()
     if form.validate_on_submit():
         db.session.add(Category(name=form.name.data, user=g.user))
@@ -218,8 +203,6 @@ def add_category():
 @login_required
 @nocache
 def analytics():
-    if not user_set():
-        return redirect(url_for('index'))
     form = StartEndDateForm()
     start = first_day_current_month()
     end = last_day_current_month()
@@ -246,11 +229,9 @@ def load_user(id):
     return User.query.get(int(id))
 
 
-# ensures g.user is set correctly. this should only return false during special circumstances
+# returns whether user is logged in
 def user_set():
     if g.user is None or not g.user.is_authenticated:
-        # log here
-        flash('Something went wrong')
         return False
     return True
 
