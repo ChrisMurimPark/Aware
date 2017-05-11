@@ -6,6 +6,8 @@ from .forms import LoginForm, RegisterForm, AddTransactionSingleForm, AddTransac
 from .models import User, Transaction, Category
 from .analytics import get_spending_by_category, get_total_spending
 from .aware_utils import first_day_current_month, last_day_current_month, commit_db
+from .email_token import generate_confirmation_token, confirm_token
+from .email import send_mail
 from .nocache import nocache
 
 import bcrypt
@@ -64,7 +66,31 @@ def register():
     if not commit_db(db.session):
         flash('Sorry, something went wrong during registration.')
         return redirect(url_for('register'))
+    token = generate_confirmation_token(user.email)
+    confirm_url = url_for('confirm_email', token=token, _external=True)
+    html = render_template('email.html', confirm_url=confirm_url)
+    subject = "Please confirm your email"
+    send_mail(user.email, subject, html)
     login_user(user)
+    return redirect(url_for('index'))
+
+
+@app.route('/confirm/<token>')
+@login_required
+@nocache
+def confirm_email(token):
+    try:
+        email = confirm_token(token)
+    except:
+        flash('The confirmation link is invalid or the link has expired.')
+    user = User.query.filter_by(email=email).first_or_404()
+    if (user.confirmed):
+        flash('Account is already confirmed.')
+    else:
+        user.confirmed = True
+        db.session.add(user)
+        db.session.commit()
+        flash('You have confirmed your account. Thank you!')
     return redirect(url_for('index'))
 
 
