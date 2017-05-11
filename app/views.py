@@ -58,7 +58,8 @@ def register():
     user = User(first_name=form.first_name.data,
             last_name=form.last_name.data, 
             email=form.email.data,
-            password=form.password.data)
+            password=form.password.data,
+            confirmed=False)
     db.session.add(user)
     if not commit_db(db.session):
         flash('Sorry, something went wrong during registration.')

@@ -10,7 +10,7 @@ class User(db.Model):
     password = db.Column(db.String(64), nullable=False)
     transactions = db.relationship('Transaction', backref='user', lazy='dynamic')
     categories = db.relationship('Category', backref='user', lazy='dynamic')
-    confirmed = db.Column(db.Boolean, default=False)
+    confirmed = db.Column(db.Boolean, nullable=False, default=False)
 
     def __init__(self, first_name, last_name, email, password, confirmed):
         self.first_name = first_name
