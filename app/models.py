@@ -10,13 +10,15 @@ class User(db.Model):
     password = db.Column(db.String(64), nullable=False)
     transactions = db.relationship('Transaction', backref='user', lazy='dynamic')
     categories = db.relationship('Category', backref='user', lazy='dynamic')
+    confirmed = db.Column(db.Boolean, default=False)
 
-    def __init__(self, first_name, last_name, email, password):
+    def __init__(self, first_name, last_name, email, password, confirmed):
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
         self.password = bcrypt.hashpw(password.encode('utf-8'),
                 bcrypt.gensalt())
+        self.confirmed = confirmed
             
     # returns true unless a user should not be allowed to authenticate
     @property
