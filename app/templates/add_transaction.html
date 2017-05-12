@@ -5,9 +5,8 @@
 		$('#NavBar #Transactions').addClass('Active');
 	});
 </script>
-<h1>Add Transaction</h1>
-    <a class="button new" href="{{ url_for('add_transaction_single')}}">Single</a>
-    <a class="button new" href="{{ url_for('add_transaction_over_time') }}">Over Time</a>
-</div>
+
+<a class="button new" href="{{ url_for('add_transaction_single')}}">Single</a>
+<a class="button new" href="{{ url_for('add_transaction_over_time') }}">Over Time</a>
 {% endblock %}
 

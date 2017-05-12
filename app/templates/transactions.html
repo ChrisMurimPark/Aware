@@ -44,7 +44,7 @@ $(document).ready(function() {
 	});
 });
 </script>
-<h1>Transactions</h1>
+
 <a class="button new" href="{{ url_for('add_transaction') }}">New Transaction</a>
 <br/><br/>
 <table hidden="true" class="display select" id="transactions" width="100%">
@@ -71,12 +71,5 @@ $(document).ready(function() {
 </table>
 <br/>
 <button class="button delete" id="delete_selected">Delete Selected</button>
-{% with messages = get_flashed_messages() %} 
-    {% if messages %}
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
 {% endblock %}
 

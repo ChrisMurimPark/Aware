@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
+<p>Your account is not activated! Please check your email for a confirmation link. Please check your spam folder as well!</p>
+<p>Didn't get the email? <a href="{{ url_for('resend_confirmation') }}">Resend</a>.</p>
+{% endblock %}

@@ -9,6 +9,7 @@ from .aware_utils import first_day_current_month, last_day_current_month, commit
 from .email_token import generate_confirmation_token, confirm_token
 from .email import send_mail
 from .nocache import nocache
+from .check_confirmed import check_confirmed
 
 import bcrypt
 import re
@@ -19,6 +20,7 @@ from dateutil.relativedelta import relativedelta
 @app.route('/')
 @app.route('/index')
 @login_required
+@check_confirmed
 @nocache
 def index():
     flash('Hello, {}.'.format(g.user.first_name))
@@ -72,12 +74,11 @@ def register():
     subject = "Please confirm your email"
     send_mail(user.email, subject, html)
     login_user(user)
-    return redirect(url_for('index'))
+    return redirect(url_for('unconfirmed'))
 
 
 @app.route('/confirm/<token>')
 @login_required
-@nocache
 def confirm_email(token):
     try:
         email = confirm_token(token)
@@ -94,17 +95,42 @@ def confirm_email(token):
     return redirect(url_for('index'))
 
 
+@app.route('/unconfirmed')
+@login_required
+@nocache
+def unconfirmed():
+    if g.user.confirmed:
+        return redirect('index')
+    return render_template('unconfirmed.html', title='Email Verification')
+
+
+@app.route('/resend')
+@login_required
+@nocache
+def resend_confirmation():
+    token = generate_confirmation_token(g.user.email)
+    confirm_url = url_for('confirm_email', token=token, _external=True)
+    html = render_template('email.html', confirm_url=confirm_url)
+    subject = "Please confirm your email"
+    send_mail(g.user.email, subject, html)
+    flash('A new confirmation email has been sent.')
+    return redirect(url_for('unconfirmed'))
+
+
 @app.route('/profile')
 @login_required
+@check_confirmed
 @nocache
 def profile():
     if not user_set():
         return redirect(url_for('index'))
-    return render_template('profile.html', title='Profile')
+    user = g.user.first_name + ' ' + g.user.last_name
+    return render_template('profile.html', title=user)
 
     
 @app.route('/transactions')
 @login_required
+@check_confirmed
 @nocache
 def transactions():
     transactions = g.user.transactions.order_by(Transaction.date.desc()).all()
@@ -113,20 +139,22 @@ def transactions():
 
 @app.route('/add_transaction')
 @login_required
+@check_confirmed
 @nocache
 def add_transaction():
-    return render_template('add_transaction.html', title='Transactions')
+    return render_template('add_transaction.html', title='Add Transaction')
 
 
 @app.route('/add_transaction/over_time', methods=['GET', 'POST'])
 @login_required
+@check_confirmed
 @nocache
 def add_transaction_over_time():
     form = AddTransactionOverTimeForm()
     form.category.choices = [(c.id, c.name) for c in g.user.categories.order_by(Category.name).all()]
     form.frequency.choices = [(1, 'Daily'), (2, 'Weekly'), (3, 'Monthly')]
     if not form.validate_on_submit():
-        return render_template('add_transaction_over_time.html', title='Transactions', form=form)
+        return render_template('add_transaction_over_time.html', title='Add Transaction', form=form)
     category = Category.query.get(form.category.data)
     name = form.title.data
     date = form.date.data
@@ -150,12 +178,13 @@ def add_transaction_over_time():
 
 @app.route('/add_transaction/single', methods=['GET', 'POST'])
 @login_required
+@check_confirmed
 @nocache
 def add_transaction_single():
     form = AddTransactionSingleForm()
     form.category.choices = [(c.id, c.name) for c in g.user.categories.order_by(Category.name).all()]
     if not form.validate_on_submit():
-        return render_template('add_transaction_single.html', title='Transactions', form=form)
+        return render_template('add_transaction_single.html', title='Add Transaction', form=form)
     category = Category.query.get(form.category.data)
     name = form.title.data
     date = form.date.data
@@ -170,12 +199,14 @@ def add_transaction_single():
 
 @app.route('/add_transaction/result')
 @login_required
+@check_confirmed
 @nocache
 def add_transaction_result():
     return render_template('add_transaction_result.html', title='Transactions', result='Success!')
 
 @app.route('/delete_transactions', methods=['GET', 'POST'])
 @login_required
+@check_confirmed
 @nocache
 def delete_transaction():
     data = request.args.get('data')
@@ -194,6 +225,7 @@ def delete_transaction():
 
 @app.route('/categories')
 @login_required
+@check_confirmed
 @nocache
 def categories():
     categories = g.user.categories.order_by(Category.name).all()
@@ -202,11 +234,12 @@ def categories():
 
 @app.route('/add_category', methods=['GET', 'POST'])
 @login_required
+@check_confirmed
 @nocache
 def add_category():
     form = AddCategoryForm()
     if not form.validate_on_submit():
-        return render_template('add_category.html', title='Categories', form=form)
+        return render_template('add_category.html', title='Add Category', form=form)
     db.session.add(Category(name=form.name.data, user=g.user))
     if not commit_db(db.session):
         flash('Sorry, something went wrong while creating the transaction.')
@@ -216,6 +249,7 @@ def add_category():
 
 @app.route('/analytics', methods=['GET','POST'])
 @login_required
+@check_confirmed
 @nocache
 def analytics():
     form = StartEndDateForm()
