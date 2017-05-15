@@ -6,13 +6,6 @@
 	});
 </script>
 
-{% with messages = get_flashed_messages() %} 
-    {% if messages %}
-        {% for message in messages %}
-            <p class="error">{{ message }}</p>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
 <form action="" method="post" name="login">
     {{ form.hidden_tag() }}
     <p>Email: {{ form.email() }}</p>
