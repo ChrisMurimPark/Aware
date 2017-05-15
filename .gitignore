@@ -25,3 +25,4 @@ transactions
 
 # swp files
 *.swp
+.env
