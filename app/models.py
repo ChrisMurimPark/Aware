@@ -42,8 +42,7 @@ class User(db.Model):
             return str(self.id) # python 3
 
     def verify_password(self, password):
-        pwhash = bcrypt.hashpw(password.encode('utf-8'), self.password)
-        return self.password == pwhash
+        return bcrypt.hashpw(password.encode('utf-8'), self.password.encode('utf-8'))== self.password.encode('utf-8')
 
 
 class Transaction(db.Model):
