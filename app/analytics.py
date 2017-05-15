@@ -21,7 +21,7 @@ def get_spending_by_category(start, end):
     joined_table = db.session.query(Category).join(Category.transactions)
     with_cols = joined_table.add_columns(Category.user_id, Category.name, func.sum(Transaction.cost).label("cost"))
     with_filters = with_cols.filter_by(user_id = g.user.id).filter(Transaction.date.between(start, end))
-    grouped = with_filters.group_by(Transaction.category_id)
+    grouped = with_filters.group_by(Category.id)
     final = grouped.order_by(func.sum(Transaction.cost).desc())
     return [[entry.name, entry.cost] for entry in final]
     
