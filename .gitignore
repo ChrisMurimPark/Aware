@@ -26,3 +26,9 @@ transactions
 # swp files
 *.swp
 .env
+
+# Backlog
+*Backlog.txt
+
+# config file
+config.py
