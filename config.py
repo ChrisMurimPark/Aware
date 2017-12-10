@@ -2,8 +2,8 @@ import os
 
 # WTForms
 WTF_CSRF_ENABLED = True
-SECRET_KEY = 'is_mayonnaise_an_instrument'
-SECURITY_PASSWORD_SALT = 'no_patrick'
+SECRET_KEY = os.environ['WTFORMS_SECRET_KEY']
+SECURITY_PASSWORD_SALT = os.environ['WTFORMS_SECURITY_PASSWORD_SALT']
 
 # SQLAlchemy
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -19,7 +19,7 @@ MAIL_USE_SSL = True
 
 # gmail authentication
 MAIL_USERNAME = 'awarepersonalfinance@gmail.com'
-MAIL_PASSWORD = 'aware_my_soul'
+MAIL_PASSWORD = os.environ['MAIL_PASSWORD']
 
 # mail accounts
 MAIL_DEFAULT_SENDER = 'awarepersonalfinance@gmail.com'
