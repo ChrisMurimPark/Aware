@@ -29,3 +29,8 @@ transactions
 
 # Backlog
 *Backlog.txt
+
+# virtual environments
+aware/
+flask/
+
