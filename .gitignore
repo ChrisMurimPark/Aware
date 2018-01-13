@@ -27,8 +27,9 @@ transactions
 *.swp
 .env
 
-# Backlog
+# random text files
 *Backlog.txt
+Brainstorm.txt
 
 # virtual environments
 aware/
