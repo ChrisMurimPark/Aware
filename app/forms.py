@@ -1,7 +1,9 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms.fields.html5 import DateField
 from wtforms import StringField, PasswordField, SelectField, DecimalField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, NumberRange, Required
+from app import csvfiles
 
 
 class LoginForm(FlaskForm):
@@ -45,3 +47,10 @@ class StartEndDateForm(FlaskForm):
     from .aware_utils import first_day_current_month, last_day_current_month
     start = DateField('start', default=first_day_current_month())
     end = DateField('end', default=last_day_current_month())
+
+
+class DataImportForm(FlaskForm):
+    err_msg = 'The file must have a .csv extension.'
+    validators = [FileRequired(),FileAllowed(csvfiles, message=err_msg)]
+    f = FileField('f', validators=validators)
+

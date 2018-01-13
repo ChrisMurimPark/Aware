@@ -2,7 +2,7 @@ from app import app, lm, db
 from flask import render_template, redirect, flash, g, request, url_for, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 
-from .forms import LoginForm, RegisterForm, AddTransactionSingleForm, AddTransactionOverTimeForm, AddCategoryForm, StartEndDateForm
+from .forms import LoginForm, RegisterForm, AddTransactionSingleForm, AddTransactionOverTimeForm, AddCategoryForm, StartEndDateForm, DataImportForm
 from .models import User, Transaction, Category
 from .analytics import get_spending_by_category, get_total_spending
 from .aware_utils import first_day_current_month, last_day_current_month, commit_db
@@ -264,6 +264,18 @@ def analytics():
     if total_cost is not None:
         total_cost_pretty = '${:,.2f}'.format(total_cost)
     return render_template('analytics.html', title='Analytics', form=form, by_category=category_data, total=total_cost_pretty)
+
+
+@app.route('/data', methods=['GET', 'POST'])
+@login_required
+@check_confirmed
+@nocache
+def data():
+    form = DataImportForm()
+    if form.validate_on_submit():
+        f = form.f.data
+        flash('{} was successfully uploaded!'.format(f.filename))
+    return render_template('import_data.html', title='Data', form=form)
 
    
 # sets a global field to track lm's current_user before each request
