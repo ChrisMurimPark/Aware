@@ -6,11 +6,8 @@ $(document).ready(function() {
 	var table = $('#transactions').DataTable({
 		// hide id column
 		columnDefs: [{ "targets": [0], "visible":false, "searchable":false }],
-
 		order: [[1,"desc"]],
-
-		select: { style: 'multi' },
-
+		select: { style: 'os' },
 		buttons: [
 			{
 				// Select only filtered rows
@@ -19,12 +16,9 @@ $(document).ready(function() {
 					table.rows({ search: "applied" }).select();
 				}
 			}, 'selectNone'],
-
 		dom: 'lfrtBpi'
 	});
-
 	$('#transactions').show();
-
 	$(function() {
 		$('#delete_selected').on('click', function() {
 			var data = table.rows({ selected: true }).data();
