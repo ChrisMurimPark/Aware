@@ -10,13 +10,12 @@ from .email_token import generate_confirmation_token, confirm_token
 from .email import send_mail
 from .nocache import nocache
 from .check_confirmed import check_confirmed
+from .data_processor import process_data
 
 import bcrypt
 import re
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
-from io import StringIO
-import csv
 
 @app.route('/')
 @app.route('/index')
@@ -243,7 +242,7 @@ def add_category():
         return render_template('add_category.html', title='Add Category', form=form)
     db.session.add(Category(name=form.name.data, user=g.user))
     if not commit_db(db.session):
-        flash('Sorry, something went wrong while creating the transaction.')
+        flash('Sorry, something went wrong while creating the category.')
         return redirect(url_for('index'))
     return redirect(url_for('categories'))
 
@@ -274,25 +273,7 @@ def analytics():
 def data():
     form = DataImportForm()
     if form.validate_on_submit():
-        # parse file
-        with StringIO(form.f.data.read().decode('utf-8')) as f:
-            reader = csv.reader(f)
-            header = next(reader)
-            indices = None
-            try:
-                REQ_COLS = ['Date', 'Description', 'Amount', 'Transaction Type', 'Category']
-                indices = [header.index(c) for c in REQ_COLS]
-            except ValueError:
-                flash('The file requires columns named {}'.format(', '.join(REQ_COLS)))
-                return render_template('import_data.html', title='Data', form=form)
-            # line has appropriate cols
-            for line in reader:
-                if line[indices[3]] == 'credit':
-                    continue
-                flash('\t'.join([line[i] for i in indices]))
-                # get categories
-                # for each line, add category if it doesn't exist
-                # add transaction
+        process_data(form.f.data, db.session, g.user)
     return render_template('import_data.html', title='Data', form=form)
 
    
