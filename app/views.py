@@ -204,6 +204,7 @@ def add_transaction_single():
 def add_transaction_result():
     return render_template('add_transaction_result.html', title='Transactions', result='Success!')
 
+
 @app.route('/delete_transactions', methods=['GET', 'POST'])
 @login_required
 @check_confirmed
@@ -217,7 +218,7 @@ def delete_transaction():
             transaction = Transaction.query.filter(Transaction.id == d).first() 
             db.session.delete(transaction)
     if not commit_db(db.session):
-        flash('Sorry, Something went wrong while deleting the transaction(s).')
+        flash('Sorry, something went wrong while deleting the transaction(s).')
         return jsonify(result='Sorry!')
     flash('Successfully deleted transaction(s).')
     return jsonify('Success!')
@@ -245,6 +246,25 @@ def add_category():
         flash('Sorry, something went wrong while creating the category.')
         return redirect(url_for('index'))
     return redirect(url_for('categories'))
+
+
+@app.route('/delete_categories', methods=['GET', 'POST'])
+@login_required
+@check_confirmed
+@nocache
+def delete_category():
+    data = request.args.get('data')
+    pattern = re.compile('[0-9]+')
+    ids = pattern.findall(data)
+    for d in ids:
+        if d is not -1:
+            category = Category.query.filter(Category.id == d).first() 
+            db.session.delete(category)
+    if not commit_db(db.session):
+        flash('Sorry, something went wrong while deleting the item(s). Please make sure that no transaction is currently using the item being deleted.')
+        return jsonify(result='Sorry!')
+    flash('Successfully deleted item(s).')
+    return jsonify('Success!')
 
 
 @app.route('/analytics', methods=['GET','POST'])

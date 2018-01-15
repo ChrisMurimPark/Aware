@@ -1,26 +1,63 @@
 {% extends "base.html" %}
 {% block content %}
 <script type="text/javascript">
-	$(document).ready(function() {
-		$('#NavBar #Categories').addClass('Active');
+$(document).ready(function() {
+	$('#NavBar #Categories').addClass('Active');
+	var table = $('#categories').DataTable({
+		// hide id column
+		columnDefs: [{ "targets": [0], "visible":false, "searchable":false }],
+		order: [[1,"asc"]],
+		select: { style: 'os' },
+		buttons: [
+			{
+				// Select only filtered rows
+				text: 'Select all',
+				action: function() {
+					table.rows({ search: "applied" }).select();
+				}
+			}, 'selectNone'],
+		dom: 'lfrtBpi'
 	});
+	$('#categories').show();
+	$(function() {
+		$('#delete_selected').on('click', function() {
+			var data = table.rows({ selected: true }).data();
+			var ids = $.map(data, function(value, index) {
+				return [value[0]];
+			});
+			var params = {};
+			params.ids = ids;
+			$.ajax({
+				url: $SCRIPT_ROOT + '/delete_categories',
+				data: { data: $.param(params, true) },
+				success: function(response) {
+					location.reload();
+				}
+			});
+		});
+	});
+});
 </script>
 
 <a class="button new" href="{{ url_for('add_category') }}">New Category</a>
 <br/><br/>
-<table>
+<table hidden="true" class="display select" id="categories" width="100%">
 	<thead>
 		<tr>
-			<th>Name</th>
+			<th>ID</th>
+			<th>Category</th>
 		</tr>
 	</thead>
 	<tbody>
 		{% for c in categories %}
 		<tr>
+			<td>{{ c.id }}</td>
 			<td>{{ c.name }}</td>
 		</tr>
 		{% endfor %}
 	</tbody>
 </table>
+<br/>
+<button class="button delete" id="delete_selected">Delete Selected</button>
 {% endblock %}
 
