@@ -15,7 +15,8 @@ import bcrypt
 import re
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
-
+from io import StringIO
+import csv
 
 @app.route('/')
 @app.route('/index')
@@ -273,8 +274,25 @@ def analytics():
 def data():
     form = DataImportForm()
     if form.validate_on_submit():
-        f = form.f.data
-        flash('{} was successfully uploaded!'.format(f.filename))
+        # parse file
+        with StringIO(form.f.data.read().decode('utf-8')) as f:
+            reader = csv.reader(f)
+            header = next(reader)
+            indices = None
+            try:
+                REQ_COLS = ['Date', 'Description', 'Amount', 'Transaction Type', 'Category']
+                indices = [header.index(c) for c in REQ_COLS]
+            except ValueError:
+                flash('The file requires columns named {}'.format(', '.join(REQ_COLS)))
+                return render_template('import_data.html', title='Data', form=form)
+            # line has appropriate cols
+            for line in reader:
+                if line[indices[3]] == 'credit':
+                    continue
+                flash('\t'.join([line[i] for i in indices]))
+                # get categories
+                # for each line, add category if it doesn't exist
+                # add transaction
     return render_template('import_data.html', title='Data', form=form)
 
    
