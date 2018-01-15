@@ -15,7 +15,7 @@
 		var by_category = document.getElementsByClassName('chart_data_by_category');
         var drawTable = false;
 		{% for item in by_category %}
-			data.addRow(["{{item[0]}}", {{item[1]}}]);
+			data.addRow(['{{item[0]|safe}}', {{item[1]}}]);
             drawTable = true;
 		{% endfor %}
 		var options = {

@@ -25,6 +25,7 @@ def get_spending_by_category(start, end):
     final = grouped.order_by(func.sum(Transaction.cost).desc())
     return [[entry.name, entry.cost] for entry in final]
     
+
 @login_required
 def get_total_spending(start, end):
     # construct a query to select the total cost between dates for user
