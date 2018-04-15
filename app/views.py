@@ -2,7 +2,7 @@ from app import app, lm, db
 from flask import render_template, redirect, flash, g, request, url_for, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 
-from .forms import LoginForm, RegisterForm, AddTransactionSingleForm, AddTransactionOverTimeForm, AddCategoryForm, StartEndDateForm, DataImportForm
+from .forms import LoginForm, RegisterForm, AddTransactionSingleForm, AddTransactionOverTimeForm, AddCategoryForm, StartEndDateForm
 from .models import User, Transaction, Category
 from .analytics import get_spending_by_category, get_total_spending
 from .aware_utils import first_day_current_month, last_day_current_month, commit_db
@@ -10,7 +10,6 @@ from .email_token import generate_confirmation_token, confirm_token
 from .email import send_mail
 from .nocache import nocache
 from .check_confirmed import check_confirmed
-from .data_processor import process_data
 
 import bcrypt
 import re
@@ -284,17 +283,6 @@ def analytics():
     if total_cost is not None:
         total_cost_pretty = '${:,.2f}'.format(total_cost)
     return render_template('analytics.html', title='Analytics', form=form, by_category=category_data, total=total_cost_pretty)
-
-
-@app.route('/data', methods=['GET', 'POST'])
-@login_required
-@check_confirmed
-@nocache
-def data():
-    form = DataImportForm()
-    if form.validate_on_submit():
-        process_data(form.f.data, db.session, g.user)
-    return render_template('import_data.html', title='Data', form=form)
 
    
 # sets a global field to track lm's current_user before each request
